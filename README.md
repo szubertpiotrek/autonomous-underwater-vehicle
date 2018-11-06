@@ -24,8 +24,9 @@ This could be checked by command git remote -v.
 
 5. Make necessary changes and commit those changes
 
-  git add .
-  git commit -m "commitTitle"
+  	git add .
+	
+  	git commit -m "commitTitle"
 
 6. Push them to repo on your account.
 
