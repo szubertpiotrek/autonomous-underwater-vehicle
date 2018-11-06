@@ -32,6 +32,6 @@ This could be checked by command git remote -v.
 
 	git push origin master
 
-7. Make Pull Request on Github.
+7. Make Pull Request on Github and compare your repo with "main".
 
 8. Repeat steps from 4 to 7 everytime you want to contribute to this "main" repo.
