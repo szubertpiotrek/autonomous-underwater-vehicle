@@ -1,0 +1,9 @@
+//w anacondzie
+
+cd ~/PathToModels/models/research
+export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+cd object_detection
+python3 legacy/train.py --logtostderr --train_dir=training/ --pipeline_config_path=training/ssd_mobilenet_v1_pets.config
+
+tensorboard --logdir=training/
+
