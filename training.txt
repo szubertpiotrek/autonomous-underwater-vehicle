@@ -1,5 +1,12 @@
+git clone https://github.com/pjreddie/darknet      #repo z modelami
+git clone https://github.com/thtrieu/darkflow.git  #repo do szkolenia sieci
+
+pip install Cython                                 #w folderze darkflow
+python setup.py build_ext --inplace                #w folderze darkflow
+
+
 cd ~/PathToDarkFlow/darkflow
 
-python flow --model cfg/yolov2-tiny-voc-1c.cfg --load bin/yolov2.weights --train --annotation train/annotations --dataset train/images --gpu 0.8 --epoch 300 --batch 4
+python flow --model cfg/yolov2-tiny-voc-1c.cfg --load bin/yolov2.weights --train --annotation train/annotations --dataset train/images --gpu 0.8 --epoch 300 --batch 4              #szkolenie sieci np.model 'yolov2-tiny-voc-1c.cfg' i wagi 'yolov2.weights'
 
 
