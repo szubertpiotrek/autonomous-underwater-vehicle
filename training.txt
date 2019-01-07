@@ -1,9 +1,5 @@
-//w anacondzie
+cd ~/PathToDarkFlow/darkflow
 
-cd ~/PathToModels/models/research
-export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
-cd object_detection
-python3 legacy/train.py --logtostderr --train_dir=training/ --pipeline_config_path=training/ssd_mobilenet_v1_pets.config
+python flow --model cfg/yolov2-tiny-voc-1c.cfg --load bin/yolov2.weights --train --annotation train/annotations --dataset train/images --gpu 0.8 --epoch 300 --batch 4
 
-tensorboard --logdir=training/
 
