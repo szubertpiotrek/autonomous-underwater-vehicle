@@ -1,6 +1,6 @@
 //żeby zainstalowac  -> pip install icrawler
 from icrawler.builtin import GoogleImageCrawler
-for keyword in ['car']:  //ustalasz czego szukasz
+for keyword in ['underwater ball']:  //ustalasz czego szukasz
     google_crawler = GoogleImageCrawler(
         parser_threads=2,
         downloader_threads=4,
