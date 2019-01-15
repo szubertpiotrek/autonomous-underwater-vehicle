@@ -1,5 +1,5 @@
 import cv2
-from .darkflow.net.build import TFNet
+from darkflow.net.build import TFNet
 import numpy as np
 import time
 import tensorflow as tf
