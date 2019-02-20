@@ -7,11 +7,11 @@ Autonomous underwater vehicle project
 
 2. Clone repo from your account.
 
-	git clone https://github.com/your-login/autonomous-underwater-vehicle
+	git clone https://github.com/your-login/autonomous-underwater-vehicle.git
 
 3. Add new remote repo as "main".
 
-	git remote add main https://github.com/szubertpiotrek/autonomous-underwater-vehicle
+	git remote add main https://github.com/szubertpiotrek/autonomous-underwater-vehicle.git
 
 Now you should have 2 remote repos configured:
 - "main" pointing this repo,
