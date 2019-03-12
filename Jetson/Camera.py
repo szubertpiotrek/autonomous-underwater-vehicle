@@ -9,8 +9,6 @@ class Camera:
     label=''
     # list of centers (x, y) of currently detected objects
     objCenters = []
-    # list contain lists of zones of currently detected objects
-    objZones = []
 
     def openCamera(self):
         
