@@ -77,8 +77,7 @@ class Camera:
                 objectsFillLevel = self.getObjectsFillLevel(detections, heightFrame, widthFrame)
                 print("Wypelnienie:", round(objectsFillLevel, 2), "%")
                 cv2.imshow('frame', frame)
-                self.saveObjectsZones(detections, heightFrame, widthFrame)
-                print(self.getObjectsZones())
+
             print('FPS {:.1f}'.format(1 / (time.time() - stime)))
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
@@ -159,33 +158,6 @@ class Camera:
                         (tl[0], tl[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                         [0, 255, 0], 2)
         return img, xmin, ymin, xmax, ymax
-    def getDetectionObjectZones(self, detection, heightFrame, widthFrame):
-        detectionObjZones = []
-        x, y = self.getObjectCenter(detection)
-        w, h = self.getObjectDimensions(detection)
-        xmin, ymin, xmax, ymax = self.convertBack(float(x), float(y), float(w), float(h))
-        x_zonemin = int(xmin/(widthFrame/3))
-        y_zonemin = int(ymin/(heightFrame/3))
-        x_zonemax = int(xmax/(widthFrame/3))
-        y_zonemax = int(ymax/(heightFrame/3))
-        for i in range(x_zonemin, x_zonemax+1):
-            for j in range(y_zonemin, y_zonemax+1):
-                detectionObjZones.append(i+3*j+1)
-        return detectionObjZones
-
-    def saveObjectsZones(self, detections, heightFrame, widthFrame):
-       objNum = self.getObjectsNum(detections)
-       for detection in detections:
-           if detections.index(detection) < len(self.objZones):
-               self.objZones[detections.index(detection)] = self.getDetectionObjectZones(detection, heightFrame, widthFrame)
-           else:
-               self.objZones.append(self.getDetectionObjectZones(detection, heightFrame, widthFrame))
-       # pop all surplus elements
-       for i in range(objNum, len(self.objZones)):
-           self.objZones.pop(objNum)
-
-    def getObjectsZones(self):
-        return self.objZones
 
     def getLabel(self):
         return self.label
