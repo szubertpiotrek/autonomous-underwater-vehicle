@@ -9,6 +9,10 @@ class Camera:
     label=''
     # list of centers (x, y) of currently detected objects
     objCenters = []
+
+    # # list contain lists of zones of currently detected objects
+    # objZones = []
+
     # list of deltas (dx, dy) defining objects displacament from the frame's center
     objCenterDeltas = []
 
@@ -84,6 +88,9 @@ class Camera:
                 print("Odchylenia od srodka: ", self.objCenterDeltas)
                 
                 print("Wypelnienie:", round(objectsFillLevel, 2), "%")
+                
+				# self.saveObjectsZones(detections)
+                # print(self.getObjectsZones())
 
                 cv2.imshow('frame', frame)
 
@@ -189,6 +196,34 @@ class Camera:
             dy = int(yc - yo)
             objCenterDelta = dx, dy
             self.objCenterDeltas.append(objCenterDelta)
+
+    #  def getDetectionObjectZones(self, detection):
+    #     detectionObjZones = []
+    #     x, y = self.getObjectCenter(detection)
+    #     w, h = self.getObjectDimensions(detection)
+    #     xmin, ymin, xmax, ymax = self.convertBack(float(x), float(y), float(w), float(h))
+    #     x_zonemin = int(xmin / (self.frameWidth / 3))
+    #     y_zonemin = int(ymin / (self.frameHeight / 3))
+    #     x_zonemax = int(xmax / (self.frameWidth / 3))
+    #     y_zonemax = int(ymax / (self.frameHeight / 3))
+    #     for i in range(x_zonemin, x_zonemax + 1):
+    #         for j in range(y_zonemin, y_zonemax + 1):
+    #             detectionObjZones.append(i + 3 * j + 1)
+    #     return detectionObjZones
+    # 
+    # def saveObjectsZones(self, detections):
+    #     objNum = self.getObjectsNum(detections)
+    #     for detection in detections:
+    #         if detections.index(detection) < len(self.objZones):
+    #             self.objZones[detections.index(detection)] = self.getDetectionObjectZones(detection)
+    #         else:
+    #             self.objZones.append(self.getDetectionObjectZones(detection))
+    #     # pop all surplus elements
+    #     for i in range(objNum, len(self.objZones)):
+    #         self.objZones.pop(objNum)
+    # 
+    # def getObjectsZones(self):
+    #     return self.objZones
 
     def getLabel(self):
         return self.label
