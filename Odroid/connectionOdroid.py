@@ -2,7 +2,7 @@ from server import *
 
 from threading import *
 
-#ip = '192.168.137.42' #adres odroida 
+#ip = '192.168.137.147' #adres odroida 
 
 class Connection(Thread):
 	def __init__(self, ip):
@@ -17,7 +17,7 @@ class Connection(Thread):
 			 
 
 			
-#conn = Connection('192.168.137.42') #w MainOdroid
+#conn = Connection('192.168.137.147') #w MainOdroid
 #conn.start()
 
 		
