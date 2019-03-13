@@ -10,6 +10,16 @@ class Camera:
     # list of centers (x, y) of currently detected objects
     objCenters = []
 
+    # # list contain lists of zones of currently detected objects
+    # objZones = []
+
+    # list of deltas (dx, dy) defining objects displacament from the frame's center
+    objCenterDeltas = []
+
+    # frame dimensions (firstly assumed but updated to real ones when capturing the frame)
+    frameHeight = 1080
+    frameWidth = 1920
+
     def openCamera(self):
         
         metaMain = None
@@ -61,8 +71,7 @@ class Camera:
                            darknet.network_height(netMain)),
                           interpolation=cv2.INTER_LINEAR)
 
-                heightFrame = np.size(frame_resized, 0)
-                widthFrame = np.size(frame_resized, 1)
+                self.updateFrameDimensions(frame_resized)
 
                 darknet.copy_image_from_bytes(darknet_image, frame_resized.tobytes())
                 
@@ -72,16 +81,34 @@ class Camera:
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
                 self.saveObjectsCenters(detections)
-                objectsFillLevel = self.getObjectsFillLevel(detections, heightFrame, widthFrame)
+                objectsFillLevel = self.getObjectsFillLevel(detections)
+
+                self.saveObjectsCenterDeltas()
+
+                print("Odchylenia od srodka: ", self.objCenterDeltas)
+                
                 print("Wypelnienie:", round(objectsFillLevel, 2), "%")
+                
+				# self.saveObjectsZones(detections)
+                # print(self.getObjectsZones())
 
                 cv2.imshow('frame', frame)
-            print('FPS {:.1f}'.format(1 / (time.time() - stime)))
+
+            print('FPS {:.1f}\n'.format(1 / (time.time() - stime)))
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
         capture.release()
         cv2.destroyAllWindows()
+
+    def updateFrameDimensions(self, frame):
+        self.frameHeight = np.size(frame, 0)
+        self.frameWidth = np.size(frame, 1)
+
+    def getFrameCenter(self):
+        xc = int(self.frameWidth / 2)
+        yc = int(self.frameHeight / 2)
+        return xc, yc
 
     def getObjectCenter(self, detection):
         x, y = detection[2][0], detection[2][1]
@@ -97,7 +124,9 @@ class Camera:
     def saveObjectsCenters(self, detections):
         objNum = self.getObjectsNum(detections)
         for detection in detections:
+            # if place in list 'objCenters' was previously populated
             if detections.index(detection) < len(self.objCenters):
+                # swap values in this place in list
                 self.objCenters[detections.index(detection)] = self.getObjectCenter(detection)
             else:
                 self.objCenters.append(self.getObjectCenter(detection))
@@ -121,12 +150,12 @@ class Camera:
             objVertexes.append(rect)
         return objVertexes
 
-    def getObjectsFillLevel(self, detections, heightFrame, widthFrame):
+    def getObjectsFillLevel(self, detections):
         objVertexesArr = np.array(self.getObjectsVertexes(detections), dtype=np.int32)
-        im = np.zeros([heightFrame, widthFrame], dtype=np.uint8)
+        im = np.zeros([self.frameHeight, self.frameWidth], dtype=np.uint8)
         cv2.fillPoly(im, objVertexesArr, 1)
         objectsArea = cv2.countNonZero(im)
-        frameArea = heightFrame * widthFrame
+        frameArea = self.frameHeight * self.frameWidth
         objFillLvl = objectsArea / frameArea * 100
         return objFillLvl
 
@@ -151,11 +180,50 @@ class Camera:
             br = (xmax, ymax)
             cv2.rectangle(img, tl, br, (0, 255, 0), 1)
             cv2.putText(img,
-                        detection[0].decode() +
+                        str(detections.index(detection)) + ". "
                         " [" + str(round(detection[1] * 100, 2)) + "]",
                         (tl[0], tl[1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                         [0, 255, 0], 2)
         return img, xmin, ymin, xmax, ymax
+
+    def saveObjectsCenterDeltas(self):
+        xc, yc = self.getFrameCenter()
+        self.objCenterDeltas.clear()
+        for center in self.objCenters:
+            xo = center[0]
+            yo = center[1]
+            dx = int(xc - xo)
+            dy = int(yc - yo)
+            objCenterDelta = dx, dy
+            self.objCenterDeltas.append(objCenterDelta)
+
+    #  def getDetectionObjectZones(self, detection):
+    #     detectionObjZones = []
+    #     x, y = self.getObjectCenter(detection)
+    #     w, h = self.getObjectDimensions(detection)
+    #     xmin, ymin, xmax, ymax = self.convertBack(float(x), float(y), float(w), float(h))
+    #     x_zonemin = int(xmin / (self.frameWidth / 3))
+    #     y_zonemin = int(ymin / (self.frameHeight / 3))
+    #     x_zonemax = int(xmax / (self.frameWidth / 3))
+    #     y_zonemax = int(ymax / (self.frameHeight / 3))
+    #     for i in range(x_zonemin, x_zonemax + 1):
+    #         for j in range(y_zonemin, y_zonemax + 1):
+    #             detectionObjZones.append(i + 3 * j + 1)
+    #     return detectionObjZones
+    # 
+    # def saveObjectsZones(self, detections):
+    #     objNum = self.getObjectsNum(detections)
+    #     for detection in detections:
+    #         if detections.index(detection) < len(self.objZones):
+    #             self.objZones[detections.index(detection)] = self.getDetectionObjectZones(detection)
+    #         else:
+    #             self.objZones.append(self.getDetectionObjectZones(detection))
+    #     # pop all surplus elements
+    #     for i in range(objNum, len(self.objZones)):
+    #         self.objZones.pop(objNum)
+    # 
+    # def getObjectsZones(self):
+    #     return self.objZones
 
     def getLabel(self):
         return self.label
