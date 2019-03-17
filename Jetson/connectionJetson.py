@@ -19,7 +19,8 @@ class Connection(Thread):
 
 	def setDataFrame(self, dataFrame):
 		self.dataFrame = dataFrame
-
+		
+connFlag = True
 while connFlag: 
 	#Jetson próbuje połączyć się z odroidem przez ethernet
 	conn = Connection('192.168.137.147')  
