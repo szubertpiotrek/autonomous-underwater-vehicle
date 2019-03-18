@@ -1,8 +1,7 @@
 from Camera import Camera
 import threading
-import time
 
-label=''
+label = ''
 
 class MyThread(threading.Thread):
 
@@ -16,8 +15,8 @@ class LabelThread(threading.Thread):
 
     def run(self):
         global label
-        #while 1:
-            #print (label)
+        # while 1:
+        #     print(label)
 
 
 mythread1 = MyThread()

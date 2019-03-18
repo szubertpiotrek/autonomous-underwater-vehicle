@@ -5,8 +5,8 @@ import subprocess
 PIN_TO_SENSE = 6        #numer pinu zgodnie z moją rozpiską
 
 def gpioCallback():
-    print ("GPIO CALLBACK - called by buttonclick!")
-    subprocess.call('python3 /home/odroid/testScript.py ', shell=True)
+    print("GPIO CALLBACK - called by buttonclick!")
+    subprocess.call('python3 /home/odroid/MainOdroid.py ', shell=True)
 
 wiringpi.wiringPiSetup()
 wiringpi.pinMode(PIN_TO_SENSE, 0)
@@ -19,5 +19,3 @@ while True:
         gpioCallback()
         break
     wiringpi.delay(100) #ms
-
-	

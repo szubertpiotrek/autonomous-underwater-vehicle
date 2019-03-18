@@ -16,14 +16,14 @@ class Camera:
     objCenterDeltas = []
     
     # path angle delta
-    pathAngle=0
+    pathAngle = 0
 
     # list of distance of currently detected objects
     objDistances = []
 
     # frame dimensions (firstly assumed but updated to real ones when capturing the frame)
-    frameHeight = 1080
-    frameWidth = 1920
+    frameHeight = 720
+    frameWidth = 1280
 
     def openCamera(self):
         
@@ -77,6 +77,7 @@ class Camera:
                           interpolation=cv2.INTER_LINEAR)
 
                 self.updateFrameDimensions(frame_resized)
+                print(self.frameWidth, self.frameHeight)
 
                 darknet.copy_image_from_bytes(darknet_image, frame_resized.tobytes())
                 
@@ -94,7 +95,7 @@ class Camera:
                 
                 print("Wypelnienie:", round(objectsFillLevel, 2), "%")
                 
-				# self.saveObjectsZones(detections)
+                # self.saveObjectsZones(detections)
                 # print(self.getObjectsZones())
 
                 cv2.imshow('frame', frame)
@@ -203,7 +204,7 @@ class Camera:
             self.objCenterDeltas.append(objCenterDelta)
 
 
-    def getPathAngle(self,frameRead):
+    def getPathAngle(self, frame):
         
         grayImage = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         hsvImage = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -212,10 +213,10 @@ class Camera:
         upperColorPath = np.array([90, 255, 255])
         maskPath = cv2.inRange(hsvImage, lowerColorPath, upperColorPath)
         res = cv2.bitwise_and(frame, frame, mask=maskPath)
-        gaussBlur = cv2.medianBlur(res,15)
+        gaussBlur = cv2.medianBlur(res, 15)
         grayImage = cv2.cvtColor(gaussBlur, cv2.COLOR_BGR2GRAY)
         _, thresh = cv2.threshold(grayImage, 127, 255, 0)
-        kernel = np.ones((5,5), np.uint8)
+        kernel = np.ones((5, 5), np.uint8)
 
         imgErosion = cv2.erode(thresh, kernel, iterations=1)
         imgDilation = cv2.dilate(imgErosion, kernel, iterations=5)
@@ -225,14 +226,16 @@ class Camera:
            rect = cv2.minAreaRect(contour)
            angle = rect[2]
            box = cv2.boxPoints(rect)
-           angle=int(rect[2])
-           if(rect[1][1]>rect[1][0]):
-              cv2.line(frame, (int(box[0][0]),int(box[0][1])), (int(box[1][0]),int(box[1][1])), (0,255,0), 2)
-              cv2.line(frame, (int(box[2][0]),int(box[2][1])), (int(box[3][0]),int(box[3][1])), (0,255,0), 2)
-        cv2.imshow('',frame)
-    return angle
+           angle = int(rect[2])
+           if(rect[1][1] > rect[1][0]):
+              cv2.line(frame, (int(box[0][0]),int(box[0][1])), (int(box[1][0]), int(box[1][1])), (0, 255, 0), 2)
+              cv2.line(frame, (int(box[2][0]),int(box[2][1])), (int(box[3][0]), int(box[3][1])), (0, 255, 0), 2)
+        cv2.imshow('', frame)
 
-    def getSingleCameraDistance(self,detections):
+        return angle
+
+
+    def getSingleCameraDistance(self, detections):
         T = np.zeros((3, 1), dtype=np.float64)
         R = np.eye(3, dtype=np.float64)
         self.objDistances.clear()
