@@ -6,7 +6,6 @@ import darknet
 
 
 class Camera:
-    label=''
     # list of centers (x, y) of currently detected objects
     objCenters = []
 
@@ -15,6 +14,12 @@ class Camera:
 
     # list of deltas (dx, dy) defining objects displacament from the frame's center
     objCenterDeltas = []
+    
+    # path angle delta
+    pathAngle=0
+
+    # list of distance of currently detected objects
+    objDistances = []
 
     # frame dimensions (firstly assumed but updated to real ones when capturing the frame)
     frameHeight = 1080
@@ -56,8 +61,8 @@ class Camera:
                 pass
 
         capture = cv2.VideoCapture(0)
-        # capture.set(cv2.CAP_PROP_FRAME_WIDTH, 800)
-        # capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 400)
+        capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+        capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
         
         darknet_image = darknet.make_image(darknet.network_width(netMain), darknet.network_height(netMain), 3)
 
@@ -197,6 +202,59 @@ class Camera:
             objCenterDelta = dx, dy
             self.objCenterDeltas.append(objCenterDelta)
 
+
+    def getPathAngle(self,frameRead):
+        
+        grayImage = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        hsvImage = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        #dobrać HSV do koloru ścieżki
+        lowerColorPath = np.array([55, 0, 0])
+        upperColorPath = np.array([90, 255, 255])
+        maskPath = cv2.inRange(hsvImage, lowerColorPath, upperColorPath)
+        res = cv2.bitwise_and(frame, frame, mask=maskPath)
+        gaussBlur = cv2.medianBlur(res,15)
+        grayImage = cv2.cvtColor(gaussBlur, cv2.COLOR_BGR2GRAY)
+        _, thresh = cv2.threshold(grayImage, 127, 255, 0)
+        kernel = np.ones((5,5), np.uint8)
+
+        imgErosion = cv2.erode(thresh, kernel, iterations=1)
+        imgDilation = cv2.dilate(imgErosion, kernel, iterations=5)
+        _, contours,_ = cv2.findContours(imgDilation, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+        for contour in contours:
+           rect = cv2.minAreaRect(contour)
+           angle = rect[2]
+           box = cv2.boxPoints(rect)
+           angle=int(rect[2])
+           if(rect[1][1]>rect[1][0]):
+              cv2.line(frame, (int(box[0][0]),int(box[0][1])), (int(box[1][0]),int(box[1][1])), (0,255,0), 2)
+              cv2.line(frame, (int(box[2][0]),int(box[2][1])), (int(box[3][0]),int(box[3][1])), (0,255,0), 2)
+        cv2.imshow('',frame)
+    return angle
+
+    def getSingleCameraDistance(self,detections):
+        T = np.zeros((3, 1), dtype=np.float64)
+        R = np.eye(3, dtype=np.float64)
+        self.objDistances.clear()
+        for detection in detections:
+           x, y, w, h = detection[2][0],\
+            detection[2][1],\
+            detection[2][2],\
+            detection[2][3]
+           xmin, ymin, xmax, ymax = self.convertBack(float(x), float(y), float(w), float(h))
+           #rozpoznane granice ramki
+           vectorOnCap = np.array([[xmin,ymin],[xmax,ymin],[xmax,ymax],[xmin,ymax]],dtype=np.float32)
+           #wielkość r2d2 w rzeczywistosci
+           vectorInReal = np.array([[0,0,0],[ 1 * 50, 0, 0 ],[ 1 * 50, 1 * 75, 0 ],[ 0, 1 * 75, 0 ]],dtype=np.float32)
+           #macierz kamery P1
+           mtxCam = np.array([[907,0,645],[0,905,341.8],[0,0,1]])
+           #zniekształcenia radialne i tangencjalne
+           dist = np.array([[0.022,-0.1223,-0.002,0.003]])
+           #funkcja zwracająca macierz rotacji i translacji kamery wzgledem rozpoznanego obiektu
+           cv2.solvePnP(vectorInReal, vectorOnCap, mtxCam, dist, R, T)
+           self.objDistances.append(T[0][0])
+    
+
     #  def getDetectionObjectZones(self, detection):
     #     detectionObjZones = []
     #     x, y = self.getObjectCenter(detection)
@@ -225,8 +283,14 @@ class Camera:
     # def getObjectsZones(self):
     #     return self.objZones
 
-    def getLabel(self):
-        return self.label
+    def getObjDistances(self):
+        return self.objDistances
 
-    def setLabel(self, value):
-        self.label = value
+    def getObjCenterDeltas(self):
+        return self.objCenterDeltas
+
+    def getObjCenters(self):
+        return self.objCenters
+
+    def getPathAngle(self):
+        return self.pathAngle
