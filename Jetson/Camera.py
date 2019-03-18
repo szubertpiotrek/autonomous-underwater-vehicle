@@ -203,7 +203,7 @@ class Camera:
             self.objCenterDeltas.append(objCenterDelta)
 
 
-    def getPathAngle(self,frameRead):
+    def getPathAngle(self,frame):
         
         grayImage = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         hsvImage = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -229,6 +229,11 @@ class Camera:
            if(rect[1][1]>rect[1][0]):
               cv2.line(frame, (int(box[0][0]),int(box[0][1])), (int(box[1][0]),int(box[1][1])), (0,255,0), 2)
               cv2.line(frame, (int(box[2][0]),int(box[2][1])), (int(box[3][0]),int(box[3][1])), (0,255,0), 2)
+              angle=90+abs(int(rect[2]))
+           if(rect[1][1]<rect[1][0]):   
+              cv2.line(frame, (int(box[0][0]),int(box[0][1])), (int(box[3][0]),int(box[3][1])), (0,255,0), 2)
+              cv2.line(frame, (int(box[1][0]),int(box[1][1])), (int(box[2][0]),int(box[2][1])), (0,255,0), 2)
+              angle=abs(int(rect[2]))
         cv2.imshow('',frame)
     return angle
 
