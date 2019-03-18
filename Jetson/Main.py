@@ -1,4 +1,4 @@
-from CustomObjectDetection import Camera
+from Camera import Camera
 import threading
 import time
 
@@ -24,5 +24,3 @@ mythread1 = MyThread()
 mythread2 = LabelThread()
 mythread1.start()
 mythread2.start()
-
-
