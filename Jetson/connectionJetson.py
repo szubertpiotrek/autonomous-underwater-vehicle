@@ -2,9 +2,8 @@ from client import *
 
 from threading import Thread
 from time import sleep
-import random
 
-#ip = '192.168.137.147' #adres odroida
+# ip = '192.168.137.147' #adres odroida
 
 class Connection(Thread):
 	def __init__(self, ip):
@@ -15,16 +14,15 @@ class Connection(Thread):
 	def run(self):
 		while True:
 			self.client.sendData(self.dataFrame)
-			sleep(1) #na przykład 1s opóźnienia 
+			sleep(1) # na przykład 1s opóźnienia
 
 	def setDataFrame(self, dataFrame):
 		self.dataFrame = dataFrame
 		
-connFlag = True
-while connFlag: 
-	#Jetson próbuje połączyć się z odroidem przez ethernet
-	conn = Connection('192.168.137.147')  
-	connFlag = not conn.flag
+# connFlag = True # flaga -> opuszczanie pętli od razu po połączeniu
+# while connFlag:
+# 	# Jetson próbuje połączyć się z odroidem przez ethernet od razu bo zbootowaniu się Jetsona
+# 	connThread = Connection('192.168.137.147')
+# 	connFlag = not connThread.flag
 
-conn.start() #rozpoczyna wysyłanie ramek danych do odroida przez ethernet
-		
+#connThread.start() #rozpoczyna wysyłanie ramek danych do odroida przez ethernet

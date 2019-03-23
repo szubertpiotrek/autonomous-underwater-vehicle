@@ -235,7 +235,7 @@ class Camera:
               cv2.line(frame, (int(box[1][0]),int(box[1][1])), (int(box[2][0]),int(box[2][1])), (0,255,0), 2)
               angle=abs(int(rect[2]))
         cv2.imshow('',frame)
-    return angle
+        return angle
 
     def getSingleCameraDistance(self,detections):
         T = np.zeros((3, 1), dtype=np.float64)
