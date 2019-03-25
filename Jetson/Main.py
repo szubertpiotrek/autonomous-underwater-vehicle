@@ -39,7 +39,7 @@ class FrameMakerThread(threading.Thread):
         self.connection = connection
 
         for item in range(0,6):
-            self.dataFrame.append(None)
+            self.singleDataFrame.append(None)
 
     def makeSingleFrame(self, stereoMonoFlag, objectNum):
         # objectNum to index obiektu ktorego dane chcemy przepisac w danej iteracji funkcji
@@ -78,10 +78,11 @@ class FrameMakerThread(threading.Thread):
 
 
 connFlag = True # flaga -> opuszczanie pętli od razu po połączeniu
+connThread = ''
 while connFlag:
-	# Jetson próbuje połączyć się z odroidem przez ethernet od razu bo zbootowaniu się Jetsona
-	connThread = Connection('192.168.137.147')
-	connFlag = not connThread.flag
+    # Jetson próbuje połączyć się z odroidem przez ethernet od razu bo zbootowaniu się Jetsona
+    connThread = Connection('192.168.137.147')
+    connFlag = not connThread.flag
 
 mythread1 = MyThread()
 mythread2 = LabelThread()
