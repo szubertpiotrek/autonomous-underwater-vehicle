@@ -203,9 +203,7 @@ class Camera:
             objCenterDelta = dx, dy
             self.objCenterDeltas.append(objCenterDelta)
 
-
-    def getPathAngle(self, frame):
-        
+    def getPathAngle(self, frame):        
         grayImage = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         hsvImage = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         #dobrać HSV do koloru ścieżki
@@ -236,6 +234,19 @@ class Camera:
 
 
     def getSingleCameraDistance(self, detections):
+           angle=int(rect[2])
+           if(rect[1][1]>rect[1][0]):
+              cv2.line(frame, (int(box[0][0]),int(box[0][1])), (int(box[1][0]),int(box[1][1])), (0,255,0), 2)
+              cv2.line(frame, (int(box[2][0]),int(box[2][1])), (int(box[3][0]),int(box[3][1])), (0,255,0), 2)
+              angle=90+abs(int(rect[2]))
+           if(rect[1][1]<rect[1][0]):   
+              cv2.line(frame, (int(box[0][0]),int(box[0][1])), (int(box[3][0]),int(box[3][1])), (0,255,0), 2)
+              cv2.line(frame, (int(box[1][0]),int(box[1][1])), (int(box[2][0]),int(box[2][1])), (0,255,0), 2)
+              angle=abs(int(rect[2]))
+        cv2.imshow('',frame)
+    return angle
+
+    def getSingleCameraDistance(self,detections):
         T = np.zeros((3, 1), dtype=np.float64)
         R = np.eye(3, dtype=np.float64)
         self.objDistances.clear()
