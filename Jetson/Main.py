@@ -1,6 +1,10 @@
 from Camera import Camera
 import threading
 import time
+import subprocess
+
+subprocess.call(["cd ~/bin", "sudo jetson_clocks", "sudo nvpmodel -m 0"])
+
 
 label=''
 
