@@ -24,6 +24,12 @@ class Camera:
     # list of camera flags - True -> Stereo , False -> Mono
     cameraFlag = False
 
+    # list of detected objects
+    detections = []
+
+    # level of fill screen
+    objectsFillLevel = 0
+
     # frame dimensions (firstly assumed but updated to real ones when capturing the frame)
     frameHeight = 1080
     frameWidth = 1920
@@ -63,23 +69,23 @@ class Camera:
             except Exception:
                 pass
 
-        capture1 = cv2.VideoCapture(0)
+        capture1 = cv2.VideoCapture(1)
         capture1.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
         capture1.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
         capture1.set(cv2.CAP_PROP_FPS, 30);
         
-        capture2 = cv2.VideoCapture(1)
+        capture2 = cv2.VideoCapture(2)
         capture2.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
         capture2.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
         capture2.set(cv2.CAP_PROP_FPS, 30);
         
         darknet_image = darknet.make_image(darknet.network_width(netMain), darknet.network_height(netMain), 3)
-        cameraFlag=False
+        self.cameraFlag=False
 
         while True:
             stime = time.time()
 
-            if(cameraFlag==False):
+            if(self.cameraFlag==False):
                 ret, frame = capture1.read()
                 frame = frame[8:712,0:1280]
                 if ret:
@@ -88,30 +94,31 @@ class Camera:
                           (darknet.network_width(netMain),
                            darknet.network_height(netMain)),
                           interpolation=cv2.INTER_LINEAR)
-
+                     self.detections.clear()
                      self.updateFrameDimensions(frame_resized)
 
                      darknet.copy_image_from_bytes(darknet_image, frame_resized.tobytes())
                 
-                     detections = darknet.detect_image(netMain, metaMain, darknet_image, thresh=0.25)
+                     self.detections = darknet.detect_image(netMain, metaMain, darknet_image, thresh=0.25)
 
-                     frame, xmin, ymin, xmax, ymax = self.cvDrawBoxes(detections, frame_resized)
+                     frame, xmin, ymin, xmax, ymax = self.cvDrawBoxes(self.detections, frame_resized)
                      frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-                     self.saveObjectsCenters(detections)
-                     objectsFillLevel = self.getObjectsFillLevel(detections)
+                     self.saveObjectsCenters(self.detections)
+                     self.objectsFillLevel = self.getObjectsFillLevel(self.detections)
 
                      self.saveObjectsCenterDeltas()
-               
+                     self.objectsFillLevel = round(self.objectsFillLevel, 2)
                      print("Odchylenia od srodka: ", self.objCenterDeltas)
-                     print("Wypelnienie:", round(objectsFillLevel, 2), "%")
+                     print("Wypelnienie:", round(self.objectsFillLevel, 2), "%")
                      print("Odleglosc:", self.objDistances)
                 
 		# self.saveObjectsZones(detections)
                 # print(self.getObjectsZones())
 
-                     self.getMonoDistance(detections)
-                     cameraFlag=True
+                     self.getMonoDistance(self.detections)
+                     self.cameraFlag=True
+                     print("dziala1")
                      cv2.imshow('frameMono', frame)
             else:
                 ret, frame = capture2.read()
@@ -127,26 +134,27 @@ class Camera:
 
                      darknet.copy_image_from_bytes(darknet_image, frame_resized.tobytes())
                 
-                     detections = darknet.detect_image(netMain, metaMain, darknet_image, thresh=0.25)
+                     self.detections = darknet.detect_image(netMain, metaMain, darknet_image, thresh=0.25)
 
-                     frame, xmin, ymin, xmax, ymax = self.cvDrawBoxes(detections, frame_resized)
+                     frame, xmin, ymin, xmax, ymax = self.cvDrawBoxes(self.detections, frame_resized)
                      frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-                     self.saveObjectsCenters(detections)
-                     objectsFillLevel = self.getObjectsFillLevel(detections)
+                     self.saveObjectsCenters(self.detections)
+                     self.objectsFillLevel = self.getObjectsFillLevel(self.detections)
 
                      self.saveObjectsCenterDeltas()
                
                      print("Odchylenia od srodka: ", self.objCenterDeltas)
-                     print("Wypelnienie:", round(objectsFillLevel, 2), "%")
+                     print("Wypelnienie:", round(self.objectsFillLevel, 2), "%")
                      print("Odleglosc:", self.objDistances)
                 
 		# self.saveObjectsZones(detections)
                 # print(self.getObjectsZones())
 
-                     self.getMonoDistance(detections)
-                     cameraFlag=True
-                     cv2.imshow('frameMono', frame)
+                     self.getMonoDistance(self.detections)
+                     self.cameraFlag=False
+                     print("dziala2")
+                     cv2.imshow('frameStereo', frame)
 
             print('FPS {:.1f}\n'.format(1 / (time.time() - stime)))
             if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -340,13 +348,13 @@ class Camera:
     #     return self.objZones
 
     def getDetectImages(self):
-        return self.
+        return self.detections
 
-    def getObjectsFillLevel(self):
-        return self.
+    def getObjectsFillLevels(self):
+        return self.objectsFillLevel
 
     def getCameraFlag(self):
-        return self.
+        return self.cameraFlag
 
     def getObjDistances(self):
         return self.objDistances
