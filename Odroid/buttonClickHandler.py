@@ -5,13 +5,8 @@ import subprocess
 PIN_TO_SENSE = 6        #numer pinu 
 
 def gpioCallback():
-<<<<<<< HEAD
-    #print ("GPIO CALLBACK - called by buttonclick!")
+#print ("GPIO CALLBACK - called by buttonclick!")
     subprocess.call('sudo python3 /home/odroid/MainOdroid.py ', shell=True)
-=======
-    print("GPIO CALLBACK - called by buttonclick!")
-    subprocess.call('python3 /home/odroid/MainOdroid.py ', shell=True)
->>>>>>> 383f4892900b360f0d43a815283f9ee99e016ebb
 
 wiringpi.wiringPiSetup()
 wiringpi.pinMode(PIN_TO_SENSE, 0)

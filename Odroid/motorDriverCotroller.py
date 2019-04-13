@@ -1,7 +1,7 @@
 import wiringpi
 
 
-class motorDriverControler:
+class motorDriverController:
     def __init__(self, m1A, m1B, m2A, m2B, PWM1, PWM2):
         self.motor1A = m1A
         self.motor1B = m1B
