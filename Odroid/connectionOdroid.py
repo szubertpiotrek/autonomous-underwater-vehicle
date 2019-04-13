@@ -16,6 +16,7 @@ class Connection(Thread):
 			self.dataFrame = self.server.receiveData()
 			#przekazuje ramki do wykorzystania
 			self.dataUser.setDataFrame(self.dataFrame)
+			print(self.getDataFrame())
 			
 	def getDataFrame(self):
 		return self.dataFrame
