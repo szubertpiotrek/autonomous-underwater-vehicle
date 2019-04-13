@@ -1,11 +1,15 @@
 from Camera import Camera
 import threading
 import time
+
+import subprocess
+
+#subprocess.call(["cd ~/bin", "sudo jetson_clocks", "sudo nvpmodel -m 0"])
+
 from connectionJetson import Connection
 
 
-
-label=''
+label = ''
 
 class MyThread(threading.Thread):
 
@@ -26,8 +30,8 @@ class LabelThread(threading.Thread):
 
     def run(self):
         global label
-        #while 1:
-            #print (label)
+        # while 1:
+        #     print(label)
 
 class FrameMakerThread(threading.Thread):
     singleDataFrame = []
@@ -81,7 +85,7 @@ connFlag = True # flaga -> opuszczanie pętli od razu po połączeniu
 connThread = ''
 while connFlag:
     # Jetson próbuje połączyć się z odroidem przez ethernet od razu bo zbootowaniu się Jetsona
-    connThread = Connection('192.168.137.147')
+    connThread = Connection('192.168.1.170')
     connFlag = not connThread.flag
 
 mythread1 = MyThread()
