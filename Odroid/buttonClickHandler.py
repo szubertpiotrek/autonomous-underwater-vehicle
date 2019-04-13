@@ -8,6 +8,7 @@ def gpioCallback():
     #print ("GPIO CALLBACK - called by buttonclick!")
     subprocess.call('sudo python3 /home/odroid/MainOdroid.py ', shell=True)
 
+
 wiringpi.wiringPiSetup()
 wiringpi.pinMode(PIN_TO_SENSE, 0)
 wiringpi.pullUpDnControl(PIN_TO_SENSE, wiringpi.PUD_UP) #podciaganie rezystorem do 3.3V
@@ -19,5 +20,3 @@ while True:
         gpioCallback()
         break
     wiringpi.delay(100) #ms
-
-	
