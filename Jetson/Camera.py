@@ -87,7 +87,7 @@ class Camera:
 
             if(self.cameraFlag==False):
                 ret, frame = capture1.read()
-                frame = frame[8:712,0:1280]
+                #frame = frame[8:712,0:1280]
                 if ret:
                      frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                      frame_resized = cv2.resize(frame_rgb,
@@ -109,16 +109,13 @@ class Camera:
 
                      self.saveObjectsCenterDeltas()
                      self.objectsFillLevel = round(self.objectsFillLevel, 2)
-                     print("Odchylenia od srodka: ", self.objCenterDeltas)
-                     print("Wypelnienie:", round(self.objectsFillLevel, 2), "%")
-                     print("Odleglosc:", self.objDistances)
+                     
                 
 		# self.saveObjectsZones(detections)
                 # print(self.getObjectsZones())
 
-                     self.getMonoDistance(self.detections)
+                 #    self.getMonoDistance(self.detections)
                      self.cameraFlag=True
-                     print("dziala1")
                      cv2.imshow('frameMono', frame)
             else:
                 ret, frame = capture2.read()
@@ -144,16 +141,12 @@ class Camera:
 
                      self.saveObjectsCenterDeltas()
                
-                     print("Odchylenia od srodka: ", self.objCenterDeltas)
-                     print("Wypelnienie:", round(self.objectsFillLevel, 2), "%")
-                     print("Odleglosc:", self.objDistances)
                 
 		# self.saveObjectsZones(detections)
                 # print(self.getObjectsZones())
 
-                     self.getMonoDistance(self.detections)
+                     #self.getMonoDistance(self.detections)
                      self.cameraFlag=False
-                     print("dziala2")
                      cv2.imshow('frameStereo', frame)
 
             print('FPS {:.1f}\n'.format(1 / (time.time() - stime)))
@@ -297,6 +290,7 @@ class Camera:
     def getMonoDistance(self,detections):
         T = np.zeros((3, 1), dtype=np.float64)
         R = np.eye(3, dtype=np.float64)
+        vectorInReal = 0
         self.objDistances.clear()
         for detection in detections:
            x, y, w, h = detection[2][0],\
@@ -357,7 +351,8 @@ class Camera:
         return self.cameraFlag
 
     def getObjDistances(self):
-        return self.objDistances
+        #return self.objDistances
+        return [10]
 
     def getObjCenterDeltasXY(self):
         return self.objCenterDeltas
@@ -365,5 +360,3 @@ class Camera:
     def getPathAngle(self):
         return self.pathAngle
 
-    def getCameraFlag(self):
-        return self.cameraFlag
