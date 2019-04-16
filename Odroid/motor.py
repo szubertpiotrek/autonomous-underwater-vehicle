@@ -43,7 +43,7 @@ class Motor():
     def getDirectionCount(self):
         return self.directionCount
 
-class MotorSchield():
+class MotorShield():
     def __init__(self, LATCH, CLCK, SER, PWM1=None, PWM2=None, PWM3=None, PWM4=None):
         wiringpi.wiringPiSetup()
         self.LATCH = LATCH
@@ -81,6 +81,7 @@ class MotorSchield():
             wiringpi.pinMode(self.PWM4, 1)
 
     def shiftWriteRegister(self, value):
+		valone = value
         wiringpi.digitalWrite(self.LATCH, 0)
         for x in range(0, 8):
             temp = value & 0x80
@@ -93,15 +94,15 @@ class MotorSchield():
                 wiringpi.digitalWrite(self.SER, 0)
             wiringpi.digitalWrite(self.CLCK, 1)
             value <<= 0x01  # shift left
-
+		
         wiringpi.digitalWrite(self.LATCH, 1)
-        print('register shifted')
+        print('register shifted to: ', valone)
 
     def startMotor(self, motorNum, velocity,  direction):
         self.motors[motorNum-1].setVelocity(velocity)
         self.allDirections -= self.motors[motorNum-1].getDirectionCount()
         self.allDirections += self.motors[motorNum-1].setDirection(direction)
-
+		
         self.shiftWriteRegister(self.allDirections)
 
     def stopMotor(self, motorNum):
