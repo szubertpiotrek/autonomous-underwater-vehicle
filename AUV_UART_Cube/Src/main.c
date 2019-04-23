@@ -35,6 +35,9 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define SIZE 4
+#define VDD 3.3
+#define ADC_12B_MAX 4095
+
 
 /* USER CODE END PD */
 
@@ -50,7 +53,8 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 uint8_t received[SIZE];
-float temp=0.0f, humidity=0.0f;
+float T=0.0f, RH=0.0f;
+uint16_t ADC_T, ADC_RH;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -59,16 +63,44 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
+/*funkcje z przedrostkiem random_ sa na potrzeby testow*/
+void random_values(void){
+	ADC_T=(rand()%(32760)+4095)/10;
+	ADC_RH=(rand()%(32760)+4095)/10;
+}
+void random_changes(void){
+	int16_t d=0;
+	do{
+		d=rand()%41-20;
+		if(ADC_T+d>=410&&ADC_T<=3686){
+			ADC_T+=d;
+		}
+	}while(ADC_T<410||ADC_T>3686);
+	do{
+		d=rand()%41-20;
+		if(ADC_RH+d>=410&&ADC_RH<=3686){
+			ADC_RH+=d;
+		}
+	}while(ADC_RH<410||ADC_RH>3686);
+}
+
+void RH_T_calculate(void){
+	float V_RH=0.0f, V_T=0.0f;
+	/*obliczanie napiec na podstawie wartosci z przetwornika ADC*/
+	V_T=ADC_T*VDD/ADC_12B_MAX;
+	V_RH=ADC_RH*VDD/ADC_12B_MAX;
+	/*wilgotnosc w procentach*/
+	RH=-12.5f+125*V_RH/VDD;
+	/*temperatura w Stopniach celsjusza*/
+	T=-66.875f+218.75f*V_T/VDD;
+}
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	uint8_t data[50]={0};
 	uint8_t size=0;
-	size=sprintf(&data, "Wilgotnosc: %.2f%c.\r\nTemperatura: %.2f.\r\n\r\n", humidity,'%', temp);
+	RH_T_calculate();
+	size=sprintf(&data, "Wilgotnosc: %.2f%c.\r\nTemperatura: %.2f%s.\r\n\r\n", RH,'%', T,"*C");
 	HAL_UART_Transmit_IT(&huart2, data, size);
-	temp+=((rand()%10000)-4999)/10000.0f;
-	humidity+=((rand()%10000)-4999)/10000.0f;
-	if(humidity<0){
-		humidity=0.0f;
-	}
+	random_changes();
 }
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 	uint8_t duty=0, time=0;
@@ -108,7 +140,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 	time=0;
 	HAL_UART_Receive_IT(&huart2, received, SIZE);
 }
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -150,8 +181,7 @@ int main(void)
 
   /*dane testowe*/
   srand(time(NULL));
-  temp=25.0f;
-  humidity=3.0f;
+  random_values();
   /*koniec danych testowych*/
   HAL_TIM_Base_Start_IT(&htim2);
   HAL_UART_Receive_IT(&huart2, received, SIZE);
