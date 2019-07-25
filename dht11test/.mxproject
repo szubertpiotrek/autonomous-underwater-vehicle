@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=/home/wawa6609/Desktop/dht11test/Inc
+HeaderPath=/home/wawa6609/Desktop/steering/Inc
 HeaderFiles=stm32f3xx_it.h;stm32f3xx_hal_conf.h;main.h;
-SourcePath=/home/wawa6609/Desktop/dht11test/Src
+SourcePath=/home/wawa6609/Desktop/steering/Src
 SourceFiles=stm32f3xx_it.c;stm32f3xx_hal_msp.c;main.c;
 
 [PreviousLibFiles]
