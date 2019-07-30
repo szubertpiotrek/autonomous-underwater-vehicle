@@ -99,7 +99,7 @@ class PIDThread(threading.Thread):
         motors_speed[1] -= self.yaw_diff
 
 
-class MotorWaitThread(threading.Thread):
+class MotorsWaitThread(threading.Thread):
 
     wait_time = 0
     prev_speed = []
@@ -122,7 +122,7 @@ class UIThread(threading.Thread):
         threading.Thread.__init__(self)
         self.lock = threading.Lock()
         self.prev_speed = motors_speed[:]
-        self.motor_wait_thread = MotorWaitThread(0, [])
+        self.motors_wait_thread = MotorsWaitThread(0, [])
 
     def run(self):
         global motors_speed, motors_names
@@ -139,15 +139,26 @@ class UIThread(threading.Thread):
                 if args[0] == "s":
                     print("Stopping all motors")
                     motors_speed = [0] * 5
-                    self.motor_wait_thread.prev_speed[:] = [0] * 5
-                    # motors.stop_all()    # uncomment
+                    self.motors_wait_thread.prev_speed[:] = [0] * 5
 
                 for name in motors_names:
                     if args[0] == name and args[1]:
                         motors_speed[motors_names.index(name)] = int(args[1])
                         print("Changing {} speed to {}".format(name, int(args[1])))
+
+                if args[0] == 'h':
+                    motors_speed[0] = int(args[1])
+                    motors_speed[1] = int(args[1])
+                    print("Changing H motors speeds to {}".format(int(args[1])))
+
+                if args[0] == 'v':
+                    motors_speed[2] = int(args[1])
+                    motors_speed[3] = int(args[1])
+                    motors_speed[4] = int(args[1])
+                    print("Changing V motors speeds to {}".format(int(args[1])))
+
                 if len(args) == 3:
-                    motor_wait_thread = MotorWaitThread(float(args[2]), self.prev_speed)
+                    motor_wait_thread = MotorsWaitThread(float(args[2]), self.prev_speed)
                     motor_wait_thread.start()
 
 
@@ -157,7 +168,11 @@ motors_control_thread = MotorsControlThread()
 # pid_thread = PIDThread()
 ui_thread = UIThread()
 
-os.system("gnome-terminal -e 'tail -f output.log'")
+# opening another terminal and executing output.log tailing
+# os.system("gnome-terminal -e 'tail -f output.log'")   # works on PC Ubuntu
+# os.system("mate-terminal --window --working-directory='~/autonomous-underwater-vehicle/Odroid/main-tests' --command='tailOutput.sh'")
+# os.system("sh -c '~/autonomous-underwater-vehicle/Odroid/main-tests/tailOutput.sh'")
+
 dht_thread.start()
 motors_control_thread.start()
 # imu_thread.start()
