@@ -73,3 +73,7 @@ class PID:
 
     def setSampleTime(self, sample_time):
         self.sample_time = sample_time
+		
+	def getError(self):
+		return self.error
+	

@@ -1,6 +1,7 @@
 import time
 import threading
 import os
+from imu import IMUClass
 
 # it would be wise to use logging afterwards with more complicated code
 # import logging
@@ -55,12 +56,18 @@ class IMUThread(threading.Thread):
 
     def __init__(self):
         threading.Thread.__init__(self)
+		self.imu = new IMUClass('roll', 'pitch', 'yaw')
 
-    def run(self):
-        while True:
-            for i in range(3):
-                print("Setting RPY angle {}".format(i))
-            time.sleep(0.5)
+    def run(self): 
+        # will start printing samples (maybe we could run it in another terminal)
+		c = 0
+		while True:
+			self.imu.catchSamples()
+			self.imu.printSamples(c % 50 == 0)
+			c += 1
+	
+	def getIMU(self):
+		return self.imu
 
 
 class PIDThread(threading.Thread):
