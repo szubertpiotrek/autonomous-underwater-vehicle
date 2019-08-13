@@ -9,9 +9,9 @@ Skrypt *RUN_TEST.py* uruchamia go w odpowiedniej konfiguracji (z zapisem danych 
 ```
 sudo python3 RUN_TEST.py
 ```
-Odczyt danych wyjściowych należy zrealizować w osobnym terminalu, który będzie śledził zmiany pliku *output.log*. Można użyć do tego skryptu *tailOutput.sh*:
+Odczyt danych wyjściowych należy zrealizować w osobnym terminalu, który będzie śledził zmiany pliku *output.log*. Można użyć do tego skryptu *ViewOutput.py*:
 ```
-sudo ./tailOutput.sh
+sudo python3 ViewOutput.py
 ```
 lub po prostu polecenia:
 ```
