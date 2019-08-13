@@ -34,8 +34,8 @@ class MotorControl:
 	
 	def initialize_all(self):
 		for i in range(5):
-			self.pwm.set_pwm(i, 0, self.mid_duty)
-		time.sleep(4)
+			self.initialize_motor(i)
+		time.sleep(3)
 
 	def initialize_motor(self, motor_num):
 		self.pwm.set_pwm(motor_num, 0, self.mid_duty)
