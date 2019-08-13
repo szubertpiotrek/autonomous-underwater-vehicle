@@ -27,6 +27,8 @@ class PID:
 
         self.output = 0
 
+        self.max_output = 0
+
     def update(self, feedback):
 
         error = self.set_point - feedback
@@ -54,6 +56,10 @@ class PID:
 
             self.output = self.Kp * self.PTerm + self.Ki * self.ITerm + self.Kd * self.DTerm
 
+            # na testy, zeby predkosc sie nie zwiekszyla za bardzo
+            if self.output > self.max_output:
+                self.output = self.max_output
+
             return self.output
 
         else:
@@ -71,9 +77,18 @@ class PID:
     def setWindup(self, windup):
         self.windup_guard = windup
 
+    def setPIDCoefficients(self, Kp, Ki, Kd):
+        self.Kp = Kp
+        self.Ki = Ki
+        self.Kd = Kd
+        print(Kp, Ki, Kd)
+
+    def setMaxOutput(self, max_output):
+        self.max_output = max_output
+
     def setSampleTime(self, sample_time):
         self.sample_time = sample_time
 		
-	def getError(self):
-		return self.error
+    def getError(self):
+        return self.error
 	
