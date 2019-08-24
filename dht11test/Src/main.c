@@ -52,11 +52,10 @@ UART_HandleTypeDef huart3;
 /* USER CODE BEGIN PV */
 uint8_t received;
 uint8_t sensor_flag=1, engines_flag=0;//flaga pozwalajaca na wylaczenie odczytu z sensora 1 - odczyt wlaczony
-uint8_t engines_delay=0;
 uint16_t pwm_vf=750, pwm_vrl=750, pwm_vrr=750;//silniki pionowe PC0 PC1 PC3
 uint16_t pwm_hl=750, pwm_hr=750;//silniki poziome PA4 PA6
 uint8_t Rh_byte1, Rh_byte2, Temp_byte1, Temp_byte2;
-uint16_t sum, RH, TEMP;
+uint16_t sum;
 uint8_t check = 0;
 
 GPIO_InitTypeDef GPIO_InitStruct;
@@ -84,6 +83,7 @@ void set_engine_duty(uint8_t engine, uint16_t duty);
 void manual(void);
 void engines_manual(void);
 void commands_manual(void);
+void sensor_procedure(void);
 void sensor_toggle(void);
 void engines_stop(void);
 void char_error(void);
@@ -132,12 +132,10 @@ int main(void)
 	DWT_Delay_Init ();
 	printf("Witaj w programie\n");
 	manual();
-	HAL_Delay (1000);
-	init_engines();
 	HAL_UART_Receive_IT(&huart2, &received, 1);
 	HAL_UART_Receive_IT(&huart3, &received, 1);
-
-
+	HAL_Delay (1000);
+	init_engines();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -147,24 +145,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		if(sensor_flag){
-			DHT11_start ();
-			check_response ();
-			Rh_byte1 = read_data ();
-			Rh_byte2 = read_data ();
-			Temp_byte1 = read_data ();
-			Temp_byte2 = read_data ();
-			sum = read_data();
-			if (sum == (Rh_byte1+Rh_byte2+Temp_byte1+Temp_byte2)){    // if the data is correct
-				printf("RH: %2d %% \t T: %2d *C \n", Rh_byte1, Temp_byte1);
-				if((engines_delay>=6)&&(engines_flag==0)){
-					engines_flag=1;
-				} else{
-					engines_delay++;
-				}
-				HAL_Delay(1200);
-			}
-		}
+		sensor_procedure();
+		HAL_Delay(1200);
 	}
   /* USER CODE END 3 */
 }
@@ -632,6 +614,20 @@ void control_procedure(void){
 		break;
 	}
 }
+void sensor_procedure(void){
+	if(sensor_flag){
+		DHT11_start ();
+		check_response ();
+		Rh_byte1 = read_data ();
+		Rh_byte2 = read_data ();
+		Temp_byte1 = read_data ();
+		Temp_byte2 = read_data ();
+		sum = read_data();
+		if (sum == (Rh_byte1+Rh_byte2+Temp_byte1+Temp_byte2)){    // if the data is correct
+			printf("RH: %2d %% \t T: %2d *C \n", Rh_byte1, Temp_byte1);
+		}
+	}
+}
 /**
  * inicjalizacja silnikow
  */
@@ -641,32 +637,39 @@ void init_engines(void){
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 	pwm_vf=duty;
 	TIM1->CCR1=pwm_vf;
+	sensor_procedure();
 	HAL_Delay(2000);
 	printf("Silnik vf jest uzbrojony.\n");
 	printf("Zbrojenie silnika vrl.\n");
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
 	pwm_vrl=duty;
 	TIM1->CCR2=pwm_vrl;
+	sensor_procedure();
 	HAL_Delay(2000);
 	printf("Silnik vrl jest uzbrojony.\n");
 	printf("Zbrojenie silnika vrr.\n");
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
 	pwm_vrr=duty;
 	TIM1->CCR4=pwm_vrr;
+	sensor_procedure();
 	HAL_Delay(2000);
 	printf("Silnik vrr jest uzbrojony.\n");
 	printf("Zbrojenie silnika hl.\n");
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
 	pwm_hl=duty;
 	TIM3->CCR2=pwm_hl;
+	sensor_procedure();
 	HAL_Delay(2000);
 	printf("Silnik hl jest uzbrojony.\n");
 	printf("Zbrojenie silnika hr.\n");
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	pwm_hr=duty;
 	TIM3->CCR1=pwm_hr;
+	sensor_procedure();
 	HAL_Delay(2000);
 	printf("Silnik hr jest uzbrojony.\n");
+	engines_flag=1;
+	printf("Silniki gotowe.\n");
 }
 /**
  * ustawianie wypelnienia silnikow

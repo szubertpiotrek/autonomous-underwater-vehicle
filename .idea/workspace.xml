@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a49322d5-da91-49a1-946c-b5106b8bd405" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Odroid/PID.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Jetson/Camera.py" beforeDir="false" afterPath="$PROJECT_DIR$/Jetson/Camera.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Jetson/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Jetson/Main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Odroid/MainOdroid.py" beforeDir="false" afterPath="$PROJECT_DIR$/Odroid/MainOdroid.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Odroid/buttonClickHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/Odroid/buttonClickHandler.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,26 +14,7 @@
     <favorites_list name="autonomous-underwater-vehicle" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Odroid/motor.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="799">
-              <caret line="47" column="8" selection-start-line="47" selection-start-column="8" selection-end-line="47" selection-end-column="32" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Odroid/motorDriveCotroler.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="94">
-              <caret line="24" column="47" lean-forward="true" selection-start-line="24" selection-start-column="47" selection-end-line="24" selection-end-column="47" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -61,14 +37,14 @@
         <option value="$PROJECT_DIR$/Odroid/buttonClickHandler.py" />
         <option value="$PROJECT_DIR$/Odroid/motorDriveCotrol.py" />
         <option value="$PROJECT_DIR$/Odroid/motorDriveCotroler.py" />
+        <option value="$PROJECT_DIR$/Odroid/MainTests.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="140" />
-    <option name="y" value="30" />
-    <option name="width" value="1750" />
-    <option name="height" value="980" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="y" value="27" />
+    <option name="width" value="1356" />
+    <option name="height" value="555" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -100,8 +76,8 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../odroid-tests" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -115,7 +91,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.connectionJetson">
+  <component name="RunManager" selected="Python.MainTests">
     <configuration name="MainOdroid" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="autonomous-underwater-vehicle" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -137,7 +113,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="connectionJetson" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="MainTests" type="PythonConfigurationType" factoryName="Python">
+      <module name="autonomous-underwater-vehicle" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Odroid" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Odroid/MainTests.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="connectionJetson" type="PythonConfigurationType" factoryName="Python">
       <module name="autonomous-underwater-vehicle" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -158,9 +155,13 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python.connectionJetson" />
+      <item itemvalue="Python.MainTests" />
+      <item itemvalue="Python.MainOdroid" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.connectionJetson" />
         <item itemvalue="Python.MainOdroid" />
       </list>
     </recent_temporary>
@@ -179,9 +180,9 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="112" y="24" width="1400" height="784" extended-state="0" />
+    <frame x="0" y="25" width="1366" height="743" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4969325" visible="true" weight="0.24944974" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4969325" visible="true" weight="0.24758364" />
       <window_info id="Structure" order="1" sideWeight="0.5030675" side_tool="true" weight="0.24944974" />
       <window_info id="Favorites" order="2" sideWeight="0.5030675" side_tool="true" weight="0.24944974" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -260,13 +261,7 @@
     </option>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://C:/Python37/Lib/threading.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="853" column="8" selection-start-line="853" selection-start-column="8" selection-end-line="853" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://C:/Python37/Lib/threading.py" />
     <entry file="file://$PROJECT_DIR$/Jetson/Main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="570">
@@ -336,17 +331,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Odroid/motorDriveCotroler.py" />
     <entry file="file://$PROJECT_DIR$/Odroid/motor.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="799">
+        <state relative-caret-position="354">
           <caret line="47" column="8" selection-start-line="47" selection-start-column="8" selection-end-line="47" selection-end-column="32" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Odroid/motorDriveCotroler.py">
+    <entry file="file://$PROJECT_DIR$/Odroid/MainTests.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="94">
-          <caret line="24" column="47" lean-forward="true" selection-start-line="24" selection-start-column="47" selection-end-line="24" selection-end-column="47" />
+        <state>
+          <caret column="12" selection-start-column="12" selection-end-column="12" />
         </state>
       </provider>
     </entry>
