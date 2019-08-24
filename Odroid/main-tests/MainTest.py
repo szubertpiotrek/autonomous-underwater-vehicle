@@ -2,16 +2,16 @@ import time
 import threading
 import os
 from imu import IMUClass
-from  MotorControl import *
+from MotorControl import *
 import DHT
 from connectionForTesting import *
+
 # it would be wise to use logging afterwards with more complicated code
 # import logging
 
 # logging.basicConfig(filename='output.log', level=logging.INFO)
 
-IP_ADDRESS = '192.168.137.206'
-
+IP_ADDRESS = '192.168.137.22'
 from PID import PID
 
 # horizontal left / right, vertical left/mid/right
@@ -29,22 +29,19 @@ RPY_angles = [0, 0, 0]
 
 class DHTThread(threading.Thread):
 
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.temperature = 0
-        self.humidity = 0
-        # self.instance = DHT.DHT11(6)
-
-    def run(self):
-        while True:
-            pass
-            # result = self.instance.read()
-            # if result.is_valid():
-            #     self.humidity = result.humidity
-            #     self.temperature = result.temperature
-            #     print("Temp: {}\tHumid: {}".format(self.temperature, self.humidity))
-            time.sleep(2)
-
+   def __init__(self):
+       threading.Thread.__init__(self)
+       self.temp = 0
+       self.humid = 0
+       self.instance = DHT.DHT11(6)
+   def run(self):
+       while True:
+           result = self.instance.read()
+           if result.is_valid():
+               self.humid = result.humidity
+               self.temp = result.temperature
+               print("Temp: {}\tHumid: {}".format(self.temp, self.humid))
+           time.sleep(6)
 
 class MotorsControlThread(threading.Thread):
 
@@ -52,25 +49,20 @@ class MotorsControlThread(threading.Thread):
         threading.Thread.__init__(self)
         self.lock = threading.Lock()
         self.motors = MotorControl(526)    # uncomment - check freqency, maybe put slightly different one
+
         self.motors.initialize_all()   # uncomment
-        global motors_speed_diff_pid
-        motors_speed = [0, 0, 0, 0, 0]
+
     def run(self):
         while True:
             with self.lock:
-                #print('Main:')
-                #print(motors_speed_diff_pid)
-                #print('---')
-                #motors_speed = [0, 0, 0, 0, 0]
-                #print("NA SILNIKI:")
-                #print(motors_speed)    # comment
                 for i in range(5):
+
                     motors_speed[i] += motors_speed_diff_pid[i]
                     motors_speed_diff_pid[i] = 0
-                    self.motors.run_motor(i, motors_speed[i])
-                    motors_speed[i] = 0    # uncomment
+                    self.motors.run_motor(i, motors_speed[i])    # uncomment
                     # print("{}:{}".format(motors_names[i], motors_speed[i]), end=" ")    # comment
-                time.sleep(0.2)    # comment
+                # print()    # comment
+                # time.sleep(3)    # comment
 
 
 class IMUThread(threading.Thread):
@@ -82,16 +74,16 @@ class IMUThread(threading.Thread):
 
     def run(self):
         # will start printing samples (maybe we could run it in another terminal)
-        c = 0
+        #c = 0
         while True:
-            
-            self.IMU.catchSamples()
-            #self.connObj.setDataFrame(self.IMU.getSamples())
-            self.IMU.printSamples(c % 50 == 0)
-            c += 1
+            with self.lock:
+                self.IMU.catchSamples()
+                self.connObj.setDataFrame(self.IMU.getSamples())
+                #self.IMU.printSamples(c % 50 == 0)
+                #c += 1
 
     def getIMU(self):
-        return self.imu
+        return self.IMU
 
     def setIMU(self, imu):
         self.IMU = imu
@@ -103,13 +95,14 @@ class PIDThread(threading.Thread):
 
     def __init__(self):
         threading.Thread.__init__(self)
-        self.lock = threading.Lock()
         self.roll_PID = PID()
         self.pitch_PID = PID()
         self.yaw_PID = PID()
-        global motors_speed_diff_pid
         self.IMU = None
-        self.roll_diff, self.pitch_diff, self.yaw_diff = 0, 0, 0
+
+        self.roll_diff = 0
+        self.pitch_diff = 0
+        self.yaw_diff = 0
 
         max_sum_output = 900
         self.roll_PID.setMaxOutput(max_sum_output / 3)
@@ -120,19 +113,17 @@ class PIDThread(threading.Thread):
 
     def run(self):
         while True:
-            with self.lock:
-                self.roll_diff = self.roll_PID.update(self.IMU.getSample('roll'))
-                self.pitch_diff = self.pitch_PID.update(self.IMU.getSample('pitch'))
-                self.yaw_diff = self.yaw_PID.update(self.IMU.getSample('yaw'))
-                print()
-                #print(self.roll_diff)
-                #print(self.pitch_diff)
-                #print(self.yaw_diff)
-                self.roll_control()
-                self.pitch_control()
-                self.yaw_control()
-                self.update_motors()
-                time.sleep(0.2)
+            self.roll_diff = self.roll_PID.update(self.IMU.getSample('roll'))
+            self.pitch_diff = self.pitch_PID.update(self.IMU.getSample('pitch'))
+            self.yaw_diff = self.yaw_PID.update(self.IMU.getSample('yaw'))
+
+        for motor in motors_speed:
+            motor = 0
+
+            self.roll_control()
+            self.pitch_control()
+            self.yaw_control()
+            time.sleep(0.5)
 
 
     def roll_control(self):
@@ -140,19 +131,16 @@ class PIDThread(threading.Thread):
         self.pid_motors_speeds_update [4] -= self.roll_diff
 
     def pitch_control(self):
-        self.pid_motors_speeds_update[2] -= self.pitch_diff * 2 / 3
-        self.pid_motors_speeds_update[4] -= self.pitch_diff * 2 / 3
-        self.pid_motors_speeds_update[3] += self.pitch_diff
+        self.pid_motors_speeds_update [2] += self.pitch_diff / 2
+        self.pid_motors_speeds_update [4] += self.pitch_diff / 2
+        self.pid_motors_speeds_update [3] -= self.pitch_diff
 
     def yaw_control(self):
-        self.pid_motors_speeds_update[0] -= self.yaw_diff
-        self.pid_motors_speeds_update[1] += self.yaw_diff
+        self.pid_motors_speeds_update [0] += self.yaw_diff
+        self.pid_motors_speeds_update [1] -= self.yaw_diff
 
     def update_motors(self):
-        #print(self.pid_motors_speeds_update)
         motors_speed_diff_pid[:] = self.pid_motors_speeds_update[:]
-        #print('Po przypisaniu:')
-        #print(motors_speed_diff_pid)
         self.pid_motors_speeds_update = [0] * 5
 
     def getIMU(self):
@@ -160,6 +148,7 @@ class PIDThread(threading.Thread):
 
     def setIMU(self, imu):
         self.IMU = imu
+
 
 class MotorsWaitThread(threading.Thread):
 
@@ -241,26 +230,27 @@ class UIThread(threading.Thread):
                     motor_wait_thread = MotorsWaitThread(float(args[2]), self.prev_speed)
                     motor_wait_thread.start()
 
+
 imu = IMUClass('roll', 'pitch', 'yaw')
-#connThread = Connection(IP_ADDRESS)
+connThread = Connection(IP_ADDRESS)
 #dht_thread = DHTThread()
-motors_control_thread = MotorsControlThread()
+#motors_control_thread = MotorsControlThread()
+
 imu_thread = IMUThread(imu)
-#imu_thread.setConnection(connThread)
-pid_thread = PIDThread()
-pid_thread.setIMU(imu)
-ui_thread = UIThread(pid_thread)
+imu_thread.setConnection(connThread)
+
+# pid_thread = PIDThread()
+#ui_thread = UIThread()
+
 
 # opening another terminal and executing output.log tailing
 # os.system("gnome-terminal -e 'tail -f output.log'")   # works on PC Ubuntu
 # os.system("mate-terminal --window --working-directory='~/autonomous-underwater-vehicle/Odroid/main-tests' --command='tailOutput.sh'")
 # os.system("sh -c '~/autonomous-underwater-vehicle/Odroid/main-tests/tailOutput.sh'")
 
-imu_thread.start()
-
 #dht_thread.start()
-#connThread.start()
-motors_control_thread.start()
-pid_thread.start()
-
-ui_thread.start()
+#motors_control_thread.start()
+imu_thread.start()
+connThread.start()
+# pid_thread.start()
+#ui_thread.start()

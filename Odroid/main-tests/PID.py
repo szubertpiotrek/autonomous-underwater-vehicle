@@ -3,7 +3,7 @@ import time
 
 class PID:
 
-    def __init__(self, P=0.1, I=0., D=0.):
+    def __init__(self, P=0., I=0., D=0.):
 
         self.Kp = P
         self.Ki = I
@@ -37,7 +37,7 @@ class PID:
 
         delta_time = self.current_time - self.last_time
         delta_error = error - self.last_error
-
+        self.output_prev = self.output
         if (delta_time >= self.sample_time):
 
             self.PTerm = error
@@ -63,7 +63,7 @@ class PID:
             return self.output
 
         else:
-            return None
+            return 0  #self.output_prev
 
     def setKp(self, Kp):
         self.Kp = Kp

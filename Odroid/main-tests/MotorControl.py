@@ -35,15 +35,16 @@ class MotorControl:
 	def initialize_all(self):
 		for i in range(5):
 			self.initialize_motor(i)
-		time.sleep(3)
+		print('---Motors are ready!---')
+		time.sleep(1)
 
 	def initialize_motor(self, motor_num):
 		self.pwm.set_pwm(motor_num, 0, self.mid_duty)
-		time.sleep(4)
+		time.sleep(1)
 
 	def run_motor(self, motor_num, speed):
 		duty = self.map_speed(speed)
-		print(duty / 4095 * 1000. / self.frequency)
+		#print(duty / 4095 * 1000. / self.frequency)
 		self.pwm.set_pwm(motor_num, 0, duty)
 
 	def stop_all(self):
