@@ -51,7 +51,7 @@ class FrameMakerThread(threading.Thread):
         # objectNum to index obiektu ktorego dane chcemy przepisac w danej iteracji funkcji
         # stereoMonoFlag = True jeżeli chcemy wysłąć ramkę z stereoDist, =False kiedy z monoDist
         print('SingleFrame zrobioned11!')
-        #lock.acquire()
+        #lock.acquire() #tworzy zamek do czasu uruchomienia metody release
         self.singleDataFrame[0] = self.cam.getObjDistances()[objectNum]
         print(self.cam.getObjCenterDeltasXY(), objectNum)
         self.singleDataFrame[1] = self.cam.getObjCenterDeltasXY()[objectNum][0] # x
