@@ -1,0 +1,10 @@
+Project: AUV_UART_Cube
+Converter: ST System Workbench for STM32 project converter
+Date: 20190707
+
+Option == null: com.atollic.truestudio.gpp.misc
+No map found for id: gnu.cpp.link.option.flags
+No map found for id: gnu.cpp.debugging.level.max
+No map found for id: gnu.cpp.compiler.option.preprocessor.def.symbols
+Option == null: com.atollic.truestudio.gpp.misc
+No map found for id: fr.ac6.managedbuild.tool.gnu.cross.assembler.exe.release

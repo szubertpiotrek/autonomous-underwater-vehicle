@@ -1,0 +1,8 @@
+main.c:71:6:random_values	16	static
+main.c:75:6:random_changes	16	static
+main.c:91:6:RH_T_calculate	16	static
+main.c:101:6:HAL_TIM_PeriodElapsedCallback	96	static
+main.c:109:6:HAL_UART_RxCpltCallback	64	static
+main.c:228:6:SystemClock_Config	168	static
+main.c:163:5:main	144	static
+main.c:544:6:Error_Handler	0	static
