@@ -10,6 +10,7 @@ from connectionJetson import Connection
 
 
 label = ''
+lock=threading.Lock()
 
 class MyThread(threading.Thread):
 
@@ -50,6 +51,7 @@ class FrameMakerThread(threading.Thread):
         # objectNum to index obiektu ktorego dane chcemy przepisac w danej iteracji funkcji
         # stereoMonoFlag = True jeżeli chcemy wysłąć ramkę z stereoDist, =False kiedy z monoDist
         print('SingleFrame zrobioned11!')
+        #lock.acquire() #tworzy zamek do czasu uruchomienia metody release
         self.singleDataFrame[0] = self.cam.getObjDistances()[objectNum]
         print(self.cam.getObjCenterDeltasXY(), objectNum)
         self.singleDataFrame[1] = self.cam.getObjCenterDeltasXY()[objectNum][0] # x
@@ -58,6 +60,7 @@ class FrameMakerThread(threading.Thread):
         self.singleDataFrame[4] = self.cam.getDetectImages[objectNum]
         self.singleDataFrame[5] = stereoMonoFlag # flaga
         print('SingleFrame zrobioned222!')
+        #lock.release()
         return self.singleDataFrame
 
 
@@ -66,13 +69,17 @@ class FrameMakerThread(threading.Thread):
         # stereoMonoFlag = True jeżeli chcemy wysłąć ramkę z stereoDist, =False kiedy z monoDist
         self.multiDataFrame.clear()
         for objectNum in range(0, numOfObjects):
+            #lock.acquire()
             self.multiDataFrame.append(self.makeSingleFrame(objectNum))
+            #lock.release()
         return self.multiDataFrame
 
     def run(self):
         while True:
+            lock.acquire()
             self.connection.setDataFrame(self.makeMultiFrame(len(self.cam.getDetectImages())))
-            
+            lock.release()
+
             time.sleep(0.2) # przykładowe opóźnienie
            
 
