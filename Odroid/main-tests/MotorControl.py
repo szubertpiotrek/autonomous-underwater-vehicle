@@ -13,8 +13,8 @@ class MotorControl:
 		self.mid_duty = 0
 		self.max_duty = 0
 
-		self.max_speed = 1000
-		self.min_speed = -1000
+		self.max_speed = 1000.
+		self.min_speed = -1000.
 
 		self.set_frequency(freq)
 
@@ -33,6 +33,7 @@ class MotorControl:
 		print(self.min_duty, self.mid_duty, self.max_duty)
 	
 	def initialize_all(self):
+		print('--Preparing motors--')
 		for i in range(5):
 			self.initialize_motor(i)
 		print('---Motors are ready!---')
@@ -45,7 +46,7 @@ class MotorControl:
 	def run_motor(self, motor_num, speed):
 		duty = self.map_speed(speed)
 		#print(duty / 4095 * 1000. / self.frequency)
-		self.pwm.set_pwm(motor_num, 0, duty)
+		self.pwm.set_pwm(motor_num, 0, int(duty))
 
 	def stop_all(self):
 		for i in range(5):
@@ -59,3 +60,17 @@ class MotorControl:
 			return self.min_speed
 
 		return round((speed - self.min_speed) * (self.max_duty - self.min_duty) / (self.max_speed - self.min_speed) + self.min_duty)
+
+	def map_motor(self, motor_num):
+		if motor_num == 0:
+			return 15
+		elif motor_num == 1:
+			return 14
+		elif motor_num == 2:
+			return 13
+		elif motor_num == 3:
+			return 12
+		elif motor_num	== 4:
+			return 11
+		else:
+			return 10
